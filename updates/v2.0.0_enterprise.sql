@@ -63,8 +63,15 @@ ALTER TABLE sales
 ALTER TABLE sale_items 
   ADD COLUMN IF NOT EXISTS buy_price DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER unit_price;
 
--- 8. Data Correction: Mark all legacy sales as 'Completed' so they show on dashboard
+-- 8. Data Correction: Mark all legacy sales as 'Completed'
 UPDATE sales SET status = 'Completed' WHERE status IS NULL OR status = 'Paid' OR status = '';
 
--- 9. Register this migration manually in case of direct execution
+-- 9. Data Correction: Historical Profit Backfill
+-- If pre-enterprise items had 0 cost, use current cost price for profit reporting
+UPDATE sale_items si 
+JOIN products p ON si.product_id = p.id 
+SET si.buy_price = p.cost_price 
+WHERE si.buy_price = 0.00;
+
+-- 10. Register this migration manually
 INSERT IGNORE INTO `migrations` (`filename`) VALUES ('v2.0.0_enterprise.sql');

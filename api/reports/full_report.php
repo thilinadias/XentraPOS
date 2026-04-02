@@ -96,10 +96,15 @@ try {
 
     // 4. Daily Sales Trend
     $stmtTrend = $pdo->prepare("
-        SELECT DATE(created_at) as date, SUM(grand_total) as revenue, (SUM(grand_total) - (SELECT SUM(si.quantity * si.buy_price) FROM sale_items si JOIN sales s3 ON si.sale_id = s3.id WHERE DATE(s3.created_at) = DATE(s.created_at) AND (s3.status IN ('Completed', 'Paid', '') OR s3.status IS NULL))) as profit
+        SELECT 
+            DATE(s.created_at) as date, 
+            SUM(s.grand_total) as revenue, 
+            SUM(s.grand_total) - SUM(si.quantity * si.buy_price) as profit
         FROM sales s
-        WHERE DATE(created_at) BETWEEN ? AND ? AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
-        GROUP BY DATE(created_at)
+        LEFT JOIN sale_items si ON s.id = si.sale_id
+        WHERE DATE(s.created_at) BETWEEN ? AND ? 
+          AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
+        GROUP BY DATE(s.created_at)
         ORDER BY date ASC
     ");
     // Simplified Profit trend query for large datasets might need optimization, but works for now.
