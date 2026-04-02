@@ -1,6 +1,6 @@
 {
-    "version": "2.0.8",
+    "version": "2.1.0",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise API Hardening (v2.0.8): Migrated Audit Logs to 'system' namespace to bypass server security restrictions."
+    "description": "Enterprise Gold Edition (v2.1.0): Real-time update synchronization and ultimate analytics stability."
 }

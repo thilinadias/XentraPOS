@@ -14,8 +14,9 @@ if ($action === 'check') {
     try {
         $localManifest = json_decode(file_get_contents(__DIR__ . '/../../includes/version.json'), true);
         
-        // Fetch from GitHub raw
-        $repoUrl = "https://raw.githubusercontent.com/thilinadias/XentraPOS/main/includes/version.json";
+        // Fetch from GitHub raw with cache-buster
+        $cacheBuster = time();
+        $repoUrl = "https://raw.githubusercontent.com/thilinadias/XentraPOS/main/includes/version.json?t=$cacheBuster";
         
         $ctx = stream_context_create([
             "http" => ["header" => "User-Agent: XentraUpdate-Client\r\n"]
