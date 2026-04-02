@@ -1,17 +1,20 @@
-# XentraPOS: Professional Point of Sale & Business Intelligence Suite
+# XentraPOS: Enterprise-Grade Point of Sale & Strategic Business Intelligence Suite
 
-XentraPOS is a high-performance, professional business management system designed for small to medium businesses. It features an integrated reporting engine with refund-aware profit calculation and a built-in automated summary dispatch.
+XentraPOS is a high-performance, professional-grade business management architecture designed to bridge the gap between traditional retail operations and modern data-driven intelligence. It provides business owners with a mission-critical dashboard featuring automated dispatch, refund-aware profit analytics, and a secure, synchronized core for seamless feature updates.
 
 ---
 
-## 🚀 Key Features v1.6.0 Stable
+## 💎 Strategic Core Features v1.6.0 Stable
 
-### 🏆 Professional Reporting & Auditing
-- **Net Profit Engine**: Automatically calculates revenue by deducting refunds and reversals.
-- **Star Cashier Tracker**: Identifies top-performing category and cashier of the month.
-- **Refund Context**: Captures reasons and notes for every reversal with full activity logging.
+### 📊 Professional Performance Analytics
+- **Refund-Aware Profit Engine**: A high-integrity financial module that calculates true net revenue by intelligently deducting refunds, reversals, and operational adjustments.
+- **Executive Performance Digest**: Automated monthly and daily performance snapshots featuring **Star Cashier** tracking and **Category Excellence** metrics.
+- **Full Transparency Logs**: Comprehensive activity logging and refund context capture for professional auditing and loss prevention.
 
-### 🤖 XentraUpdate Core (Self-Updater)
+### 🔄 XentraUpdate Hub (Self-Healing Core)
+- **GitHub Synchronized Deployment**: A manual, one-click update infrastructure that keeps your local system aligned with the latest stable repository features via a secure GUI.
+- **Safe-Merge Asset Protection**: Robust file management that ensures your private `database.php` credentials and local branding assets are **never** compromised during synchronization.
+- **Sequential SQL Migration Engine**: An intelligent database versioning system that detects and applies schema improvements sequentially, ensuring long-term database stability.
 - **One-Click Synchronization**: Update your local system directly from the GitHub repository via the GUI.
 - **Sequential SQL Migrations**: Automatically detects and applies database schema changes from the `/updates/` folder.
 - **Safe-Merge Technology**: Protects your local `config/database.php` and Company logos during any update.
