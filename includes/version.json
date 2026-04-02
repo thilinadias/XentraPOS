@@ -1,6 +1,6 @@
 {
-    "version": "2.0.3",
+    "version": "2.0.4",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Critical Sync Patch (v2.0.3): Self-healing database tables for Audit Logs."
+    "description": "Enterprise Stability Sync (v2.0.4): Advanced Activity Audit diagnostics and absolute error silencing."
 }

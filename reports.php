@@ -354,25 +354,47 @@ async function loadStockReports() {
 }
 
 async function loadActivityLogs() {
+    const tbody = document.getElementById('logTableBody');
     try {
-        const res = await fetch('/pos/api/logs/list.php');
+        const res = await fetch('/pos/api/logs/list.php', {
+            headers: { 'Accept': 'application/json' }
+        });
+        
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const errorBody = await res.text();
+            console.error("Non-JSON detected:", errorBody);
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">
+                <i class="bi bi-exclamation-octagon fs-2"></i><br>
+                <b>Server communication error.</b><br>
+                <small class="text-muted">The server returned HTML instead of data. Please check your login session.</small>
+            </td></tr>`;
+            return;
+        }
+
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
-        const tbody = document.getElementById('logTableBody');
         tbody.innerHTML = '';
+        if (data.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No activity logs found.</td></tr>';
+            return;
+        }
+
         data.data.forEach(l => {
             const date = new Date(l.created_at).toLocaleString();
             tbody.innerHTML += `
                 <tr>
                     <td class="fw-bold text-primary">${l.username}</td>
                     <td><span class="badge bg-light text-dark border">${l.action}</span></td>
-                    <td class="small">${l.description || '-'}</td>
+                    <td class="small text-wrap">${l.description || '-'}</td>
                     <td class="text-muted small">${date}</td>
                 </tr>
             `;
         });
-    } catch (err) { alert(err.message); }
+    } catch (err) { 
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger"><b>Error:</b> ${err.message}</td></tr>`;
+    }
 }
 
 function renderTable(id, items, templateFn) {
