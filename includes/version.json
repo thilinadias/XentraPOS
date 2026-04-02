@@ -1,6 +1,6 @@
 {
-    "version": "2.0.2",
+    "version": "2.0.3",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Analytics Sync: Fixed historical data visibility and Audit Log stability."
+    "description": "Critical Sync Patch (v2.0.3): Self-healing database tables for Audit Logs."
 }
