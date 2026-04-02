@@ -48,7 +48,8 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/pos/assets/css/style.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
     <script>
       window.POS_SETTINGS = {
         currency: '<?php echo $currency; ?>',
@@ -56,11 +57,11 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
       };
 
       <?php if ($trigger_daily): ?>
-      fetch('/pos/api/system/daily_cron.php?date=<?php echo $yesterday; ?>').then(r => r.json()).catch(err => console.error('Daily Trigger Failed'));
+      fetch('api/system/daily_cron.php?date=<?php echo $yesterday; ?>').then(r => r.json()).catch(err => console.error('Daily Trigger Failed'));
       <?php endif; ?>
 
       <?php if ($trigger_monthly): ?>
-      fetch('/pos/api/system/monthly_cron.php?month=<?php echo $last_month; ?>').then(r => r.json()).catch(err => console.error('Monthly Trigger Failed'));
+      fetch('api/system/monthly_cron.php?month=<?php echo $last_month; ?>').then(r => r.json()).catch(err => console.error('Monthly Trigger Failed'));
       <?php endif; ?>
     </script>
 </head>
@@ -70,8 +71,13 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="/pos/dashboard.php">
-        <i class="bi bi-cart3"></i> XentraPOS
+    <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.php">
+        <?php if (!empty($settings['company_logo']) && file_exists(__DIR__ . '/../' . $settings['company_logo'])): ?>
+            <img src="<?php echo htmlspecialchars($settings['company_logo']); ?>" alt="Logo" height="30" class="me-2 rounded shadow-sm bg-white">
+        <?php else: ?>
+            <i class="bi bi-cart3 me-2"></i>
+        <?php endif; ?>
+        <?php echo htmlspecialchars($settings['company_name'] ?? 'XentraPOS'); ?>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
@@ -79,11 +85,11 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/pos/dashboard.php">Dashboard</a>
+          <a class="nav-link" href="dashboard.php">Dashboard</a>
         </li>
         <?php if (in_array($_SESSION['role'], ['super_admin', 'agent'])): ?>
         <li class="nav-item">
-          <a class="nav-link text-warning fw-bold" href="/pos/pos.php"><i class="bi bi-display"></i> POS Terminal</a>
+          <a class="nav-link text-warning fw-bold" href="pos.php"><i class="bi bi-display"></i> POS Terminal</a>
         </li>
         <?php endif; ?>
         <li class="nav-item dropdown">
@@ -91,16 +97,16 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
             Sales
           </a>
           <ul class="dropdown-menu shadow border-0">
-            <li><a class="dropdown-item" href="/pos/sales.php"><i class="bi bi-clock-history me-2 text-muted"></i>Sales History</a></li>
+            <li><a class="dropdown-item" href="sales.php"><i class="bi bi-clock-history me-2 text-muted"></i>Sales History</a></li>
             <?php if (in_array($_SESSION['role'], ['super_admin', 'agent'])): ?>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/pos/manual_invoice.php"><i class="bi bi-file-earmark-plus me-2 text-muted"></i>Create Manual Invoice</a></li>
+            <li><a class="dropdown-item" href="manual_invoice.php"><i class="bi bi-file-earmark-plus me-2 text-muted"></i>Create Manual Invoice</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/pos/customers.php"><i class="bi bi-people me-2 text-muted"></i>Customer CRM</a></li>
+            <li><a class="dropdown-item" href="customers.php"><i class="bi bi-people me-2 text-muted"></i>Customer CRM</a></li>
             <?php endif; ?>
             <?php if (in_array($_SESSION['role'], ['super_admin', 'auditor'])): ?>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/pos/reports.php"><i class="bi bi-graph-up me-2 text-muted"></i>Advanced Reports</a></li>
+            <li><a class="dropdown-item" href="reports.php"><i class="bi bi-graph-up me-2 text-muted"></i>Advanced Reports</a></li>
             <?php endif; ?>
           </ul>
         </li>
@@ -109,22 +115,22 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin') {
             Inventory
           </a>
           <ul class="dropdown-menu shadow border-0">
-            <li><a class="dropdown-item" href="/pos/categories.php"><i class="bi bi-tags me-2 text-muted"></i>Categories</a></li>
-            <li><a class="dropdown-item" href="/pos/products.php"><i class="bi bi-box-seam me-2 text-muted"></i>Products Master</a></li>
+            <li><a class="dropdown-item" href="categories.php"><i class="bi bi-tags me-2 text-muted"></i>Categories</a></li>
+            <li><a class="dropdown-item" href="products.php"><i class="bi bi-box-seam me-2 text-muted"></i>Products Master</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/pos/suppliers.php"><i class="bi bi-truck me-2 text-muted"></i>Suppliers & Stock-In</a></li>
+            <li><a class="dropdown-item" href="suppliers.php"><i class="bi bi-truck me-2 text-muted"></i>Suppliers & Stock-In</a></li>
             <?php if (in_array($_SESSION['role'], ['super_admin', 'agent'])): ?>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/pos/mobile_add.php"><i class="bi bi-phone me-2 text-muted"></i>Mobile App View</a></li>
+            <li><a class="dropdown-item" href="mobile_add.php"><i class="bi bi-phone me-2 text-muted"></i>Mobile App View</a></li>
             <?php endif; ?>
           </ul>
         </li>
         <?php if ($_SESSION['role'] === 'super_admin'): ?>
         <li class="nav-item">
-          <a class="nav-link" href="/pos/users.php">Manage Users</a>
+          <a class="nav-link" href="users.php">Manage Users</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/pos/settings.php"><i class="bi bi-gear"></i> Settings</a>
+          <a class="nav-link" href="settings.php"><i class="bi bi-gear"></i> Settings</a>
         </li>
         <?php endif; ?>
       </ul>

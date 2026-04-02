@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Load All Settings
     try {
-        const res = await fetch('/pos/api/settings/get.php');
+        const res = await fetch('api/settings/get.php');
         const data = await res.json();
         
         if(data.success) {
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('low_stock_threshold').value = data.data.low_stock_threshold || '10';
             
             if(data.data.company_logo) {
-                document.getElementById('logoPreview').src = `/pos/${data.data.company_logo}`;
+                document.getElementById('logoPreview').src = data.data.company_logo;
             }
 
             // Email Settings
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            const res = await fetch('/pos/api/settings/update.php', { method: 'POST', body: formData });
+            const res = await fetch('api/settings/update.php', { method: 'POST', body: formData });
             const result = await res.json();
             if(!res.ok) throw new Error(result.message);
             showAlert(result.message, 'success');
@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
         try {
-            const res = await fetch('/pos/api/system/test_email.php');
+            const res = await fetch('api/system/test_email.php');
             const data = await res.json();
             if(data.success) showAlert('Success! Test email sent.', 'success');
             else throw new Error(data.message);
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const btn = document.getElementById('triggerDailyBtn');
         btn.disabled = true;
         try {
-            const res = await fetch('/pos/api/system/daily_cron.php');
+            const res = await fetch('api/system/daily_cron.php');
             const data = await res.json();
             if(data.success) showAlert('Daily Digest sent successfully.', 'success');
         } finally { btn.disabled = false; }
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const btn = document.getElementById('triggerMonthlyBtn');
         btn.disabled = true;
         try {
-            const res = await fetch('/pos/api/system/monthly_cron.php');
+            const res = await fetch('api/system/monthly_cron.php');
             const data = await res.json();
             if(data.success) showAlert('Monthly Summary sent successfully.', 'success');
         } finally { btn.disabled = false; }
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
 
         try {
-            const res = await fetch('/pos/api/system/update_core.php?action=check');
+            const res = await fetch('api/system/update_core.php?action=check');
             const data = await res.json();
             
             if (data.success) {
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const updateArea = document.getElementById('updateStatusArea');
         updateArea.innerHTML = `<div class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><h6 class="fw-bold">Merging Core Assets...</h6></div>`;
         try {
-            const res = await fetch('/pos/api/system/update_core.php?action=apply');
+            const res = await fetch('api/system/update_core.php?action=apply');
             const data = await res.json();
             if (data.success) {
                 updateArea.innerHTML = `<div class="alert alert-success border-0 text-center py-4"><i class="bi bi-check-circle fs-1 mb-3 d-block"></i><h6 class="fw-bold text-dark">Sync Successful!</h6><button class="btn btn-dark btn-sm mt-3" onclick="location.reload()">Refresh System</button></div>`;
