@@ -163,4 +163,4 @@ INSERT IGNORE INTO `settings` (`setting_key`, `setting_value`) VALUES
 -- Default Super Admin (password: admin123)
 -- Delete or edit this after first login
 INSERT IGNORE INTO `users` (`username`, `password`, `role`) VALUES 
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin');
+('admin', '$2y$10$3cdClMdLGVcL.irJ.HEJBe7w75UcuxZROAI41ookBpoozPN0IKQMa', 'super_admin');
