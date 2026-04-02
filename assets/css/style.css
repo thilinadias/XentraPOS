@@ -1,0 +1,167 @@
+/* C:\xampp\htdocs\pos\assets\css\style.css */
+
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --bg-light: #f8f9fa;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    --premium-radius: 12px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7fa;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent global scrollbar */
+}
+
+/* Fixed Layout Shell */
+.navbar {
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    z-index: 1030;
+}
+
+main, .main-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+}
+
+.sticky-footer {
+    flex-shrink: 0;
+    background: #fff;
+    border-top: 1px solid #dee2e6;
+    padding: 0.75rem 0;
+    z-index: 1030;
+    font-size: 0.9rem;
+}
+
+/* Premium Card Design */
+.premium-card {
+    background: #fff;
+    border: none;
+    border-radius: var(--premium-radius);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.premium-card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+/* Table Enhancements */
+.table-responsive {
+    background: #fff;
+    border-radius: var(--premium-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    padding: 1px;
+}
+
+.table thead th {
+    background-color: #fcfcfc;
+    border-bottom: 2px solid #f1f1f1;
+    color: #333;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* User Status Badges */
+.status-active {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: #198754;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+.status-suspended {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+}
+
+/* Custom Scrollbar for desktop-like feel */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #bbb;
+}
+
+/* Login Page Specialized UI (Overrides Shell) */
+body.login-page {
+    overflow: auto;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at 10% 20%, rgb(239, 246, 255) 0%, rgb(219, 234, 254) 90%);
+}
+
+.login-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid rgba(255,255,255,0.7) !important;
+}
+
+.login-card .form-control {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    background: #fdfdfd;
+}
+
+.login-card .input-group-text {
+    border-radius: 8px 0 0 8px;
+    background: #fdfdfd;
+    border-right: none;
+    color: #999;
+}
+
+.login-card .btn-primary {
+    padding: 0.9rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    border: none;
+}
+
+/* Utilities */
+.cursor-pointer { cursor: pointer; }
+.fw-bold-700 { font-weight: 700; }
+
+

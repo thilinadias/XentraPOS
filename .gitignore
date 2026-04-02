@@ -1,0 +1,21 @@
+# XentraPOS Sensitive Data / Junk Files
+config/database.php
+includes/version.json.bak
+temp_update.zip
+temp_extract/
+
+# Personal Branding (Kept Local)
+assets/img/logo.png
+
+# User Activity / Logs
+activity_log.txt
+logs/
+
+# Development Tools
+.vscode/
+.idea/
+
+# OS Specific
+.DS_Store
+Thumbs.db
+desktop.ini
