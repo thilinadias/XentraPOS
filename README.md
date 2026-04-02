@@ -60,7 +60,7 @@ We recommend Docker for Linux to guarantee a flawless, zero-configuration enviro
    chmod +x install.sh
    ./install.sh
    ```
-3. **Access**: Navigate to `http://localhost:8080`.
+3. **Access**: Navigate to `http://localhost:8080/pos/`.
 *(Note: Docker automatically imports the database schema and injects connection credentials, requiring zero manual configuration.)*
 
 ---
