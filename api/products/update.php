@@ -40,6 +40,12 @@ if (empty($name) || empty($price)) {
     exit(json_encode(['success' => false, 'message' => 'Name and Price are required.']));
 }
 
+// FINANCIAL INTEGRITY GUARD: Warning for negative margins
+if ($cost_price >= $price && $cost_price > 0) {
+    // We allow it (clearance/loss-leader), but we log a specific notification
+    error_log("FINANCIAL WARNING: Product '$name' updated with cost ($cost_price) >= price ($price)");
+}
+
 $image_path = $oldProduct['image_path']; // Default to old image
 
 // Handle Image Update

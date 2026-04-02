@@ -25,6 +25,11 @@ if (empty($name) || empty($price)) {
     exit(json_encode(['success' => false, 'message' => 'Name and Price are required']));
 }
 
+// FINANCIAL INTEGRITY GUARD: Warning for unusual margins
+if ($cost_price >= $price && $cost_price > 0) {
+    error_log("FINANCIAL WARNING: New product '$name' created with cost ($cost_price) >= price ($price)");
+}
+
 $image_path = null;
 
 // Handle File Upload
