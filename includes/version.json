@@ -1,5 +1,6 @@
 {
-    "version": "1.6.0",
+    "version": "2.0.0",
     "release_date": "2026-04-02",
-    "channel": "stable"
+    "channel": "stable",
+    "description": "Enterprise Edition Upgrade: Master CRM, Profit Tracking, and Dashboard v2.0"
 }
