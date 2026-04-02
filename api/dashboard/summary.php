@@ -20,13 +20,13 @@ try {
     $stats = ['currency_symbol' => $currency];
 
     // 1. Today's Stats
-    $stmtToday = $pdo->query("SELECT SUM(grand_total) as revenue, COUNT(*) as count FROM sales WHERE DATE(created_at) = CURDATE() AND (status = 'Completed' OR status = '' OR status IS NULL)");
+    $stmtToday = $pdo->query("SELECT SUM(grand_total) as revenue, COUNT(*) as count FROM sales WHERE DATE(created_at) = CURDATE() AND (status IN ('Completed', 'Paid', '') OR status IS NULL)");
     $today = $stmtToday->fetch();
     $stats['today_revenue'] = (float)($today['revenue'] ?? 0);
     $stats['today_count'] = (int)($today['count'] ?? 0);
 
     // 2. Monthly Revenue
-    $stmtMonth = $pdo->query("SELECT SUM(grand_total) as revenue FROM sales WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND (status = 'Completed' OR status = '' OR status IS NULL)");
+    $stmtMonth = $pdo->query("SELECT SUM(grand_total) as revenue FROM sales WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND (status IN ('Completed', 'Paid', '') OR status IS NULL)");
     $month = $stmtMonth->fetch();
     $stats['monthly_revenue'] = (float)($month['revenue'] ?? 0);
 
@@ -44,7 +44,7 @@ try {
             SELECT CURDATE() - INTERVAL 4 DAY UNION SELECT CURDATE() - INTERVAL 3 DAY UNION 
             SELECT CURDATE() - INTERVAL 2 DAY UNION SELECT CURDATE() - INTERVAL 1 DAY UNION SELECT CURDATE()
         ) AS date_table
-        LEFT JOIN sales s ON DATE(s.created_at) = date_table.date AND (s.status = 'Completed' OR s.status = '' OR s.status IS NULL)
+        LEFT JOIN sales s ON DATE(s.created_at) = date_table.date AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
         GROUP BY date_table.date
         ORDER BY date_table.date ASC
     ");

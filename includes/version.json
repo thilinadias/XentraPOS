@@ -1,6 +1,6 @@
 {
-    "version": "2.0.6",
+    "version": "2.0.7",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Sync v2.0.6: Final Analytics Stability and Force-Sync Support."
+    "description": "Enterprise Analytics Restoration (v2.0.7): Fixed legacy status filtering in Dashboard and Reports."
 }
