@@ -36,9 +36,11 @@ CREATE TABLE IF NOT EXISTS `products` (
   `category_id` INT NULL,
   `name` VARCHAR(150) NOT NULL,
   `barcode` VARCHAR(100) UNIQUE NULL,
+  `cost_price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   `price` DECIMAL(10,2) NOT NULL,
   `stock_quantity` INT NOT NULL DEFAULT 0,
   `image_path` VARCHAR(255) NULL,
+  `description` TEXT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
