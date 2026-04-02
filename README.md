@@ -73,6 +73,17 @@ XentraPOS is a high-performance, professional business management system designe
 
 ---
 
+## 🔑 First-Time Login (Default)
+After importing the `database.sql` file, you can access the system using the following temporary credentials:
+
+- **Username**: `admin`
+- **Password**: `admin123`
+
+> [!WARNING]
+> **Security Requirement**: For your protection, you MUST change this default password in the **User Management** section immediately after your first successful login.
+
+---
+
 ## 🔒 Security & Privacy
 - **Credentials Guard**: Local configuration and database passwords are never stored in the repository.
 - **Personal Branding**: Your private business logos and settings remain local to your computer.
