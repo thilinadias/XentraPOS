@@ -1,6 +1,6 @@
 {
-    "version": "2.1.6",
+    "version": "2.1.7",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Global Patch v2.1.6: Finalized multi-node path hardening and dynamic brand restoration."
+    "description": "System Core v2.1.7: Resolved dashboard syntax conflicts and finalized multi-node pathing."
 }

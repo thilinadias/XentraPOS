@@ -225,7 +225,13 @@ require_role(['super_admin']);
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Tab Persistence Logic
+    // 1. UI Elements Initialization
+    const manualCheckBtn = document.getElementById('manualCheckBtn');
+    const updateArea = document.getElementById('updateStatusArea');
+    const localBadge = document.getElementById('localVersionBadge');
+    const alertContainer = document.getElementById('alertContainer');
+
+    // 2. Tab Persistence Logic
     const activeTab = localStorage.getItem('lastSettingsTab');
     if (activeTab) {
         const tabEl = document.querySelector(`#${activeTab}`);
@@ -241,47 +247,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // 2. Load All Settings
+    // 3. Load All Settings from API
     try {
         const res = await fetch('api/settings/get.php');
         const data = await res.json();
         
         if(data.success) {
-            // Company Info
-            document.getElementById('company_name').value = data.data.company_name || '';
-            document.getElementById('company_address').value = data.data.company_address || '';
-            document.getElementById('company_email').value = data.data.company_email || '';
-            document.getElementById('company_phone').value = data.data.company_phone || '';
-            document.getElementById('invoice_footer_message').value = data.data.invoice_footer_message || '';
-            document.getElementById('currency_symbol').value = data.data.currency_symbol || '$';
-            document.getElementById('low_stock_threshold').value = data.data.low_stock_threshold || '10';
+            // Identity fields
+            const identityFields = ['company_name', 'company_address', 'company_email', 'company_phone', 'invoice_footer_message', 'currency_symbol', 'low_stock_threshold'];
+            identityFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = data.data[id] || '';
+            });
             
             if(data.data.company_logo) {
-                document.getElementById('logoPreview').src = data.data.company_logo;
+                const lp = document.getElementById('logoPreview');
+                if (lp) lp.src = data.data.company_logo;
             }
 
-            // Email Settings
-            document.getElementById('smtp_host').value = data.data.smtp_host || '';
-            document.getElementById('smtp_port').value = data.data.smtp_port || '';
-            document.getElementById('smtp_user').value = data.data.smtp_user || '';
-            document.getElementById('smtp_pass').value = data.data.smtp_pass || '';
-            document.getElementById('smtp_encryption').value = data.data.smtp_encryption || 'tls';
-            document.getElementById('smtp_from_email').value = data.data.smtp_from_email || '';
-            document.getElementById('email_alerts_enabled').checked = (data.data.email_alerts_enabled === '1');
-            document.getElementById('email_daily_summary_enabled').checked = (data.data.email_daily_summary_enabled === '1');
+            // Email & SMTP fields
+            const emailFields = ['smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'smtp_encryption', 'smtp_from_email'];
+            emailFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = data.data[id] || '';
+            });
+            
+            const alertsEnabled = document.getElementById('email_alerts_enabled');
+            if (alertsEnabled) alertsEnabled.checked = (data.data.email_alerts_enabled === '1');
+            
+            const dailyEnabled = document.getElementById('email_daily_summary_enabled');
+            if (dailyEnabled) dailyEnabled.checked = (data.data.email_daily_summary_enabled === '1');
         }
-    } catch(e) { console.error('Load Failed', e); }
+    } catch(e) { 
+        console.error('Initial Settings Load Failed', e); 
+    }
 
-    // 3. Logo Preview Handler
-    document.getElementById('company_logo').addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => document.getElementById('logoPreview').src = e.target.result;
-            reader.readAsDataURL(e.target.files[0]);
-        }
-    });
+    // 4. Logo Preview Handler
+    const logoInput = document.getElementById('company_logo');
+    if (logoInput) {
+        logoInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const lp = document.getElementById('logoPreview');
+                    if (lp) lp.src = e.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+    }
 
-    // 4. Form Handlers
+    // 5. Shared Form Submission Logic
     const saveSettings = async (e, formId) => {
         e.preventDefault();
         const btn = e.target.querySelector('button[type="submit"]');
@@ -301,102 +317,104 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(!res.ok) throw new Error(result.message);
             showAlert(result.message, 'success');
         } catch(err) {
-            showAlert('Failed: ' + err.message, 'danger');
+            showAlert('Update Failed: ' + err.message, 'danger');
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
     };
 
-    document.getElementById('settingsForm').onsubmit = (e) => saveSettings(e, 'settingsForm');
-    document.getElementById('emailSettingsForm').onsubmit = (e) => saveSettings(e, 'emailSettingsForm');
+    const sForm = document.getElementById('settingsForm');
+    if (sForm) sForm.onsubmit = (e) => saveSettings(e, 'settingsForm');
+    
+    const eForm = document.getElementById('emailSettingsForm');
+    if (eForm) eForm.onsubmit = (e) => saveSettings(e, 'emailSettingsForm');
 
-    // 5. Test Email logic
-    document.getElementById('testEmailBtn').onclick = async () => {
-        const btn = document.getElementById('testEmailBtn');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
-        try {
-            const res = await fetch('api/system/test_email.php');
-            const data = await res.json();
-            if(data.success) showAlert('Success! Test email sent.', 'success');
-            else throw new Error(data.message);
-        } catch(err) { showAlert(err.message, 'danger'); }
-        finally { btn.disabled = false; btn.innerHTML = originalText; }
-    };
+    // 6. Test Email Logic
+    const testEmailBtn = document.getElementById('testEmailBtn');
+    if (testEmailBtn) {
+        testEmailBtn.onclick = async () => {
+            const originalText = testEmailBtn.innerHTML;
+            testEmailBtn.disabled = true;
+            testEmailBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
+            try {
+                const res = await fetch('api/system/test_email.php');
+                const data = await res.json();
+                if(data.success) showAlert('Success! Connection healthy.', 'success');
+                else throw new Error(data.message);
+            } catch(err) { 
+                showAlert(err.message, 'danger'); 
+            } finally { 
+                testEmailBtn.disabled = false; 
+                testEmailBtn.innerHTML = originalText; 
+            }
+        };
+    }
 
-    // 6. Manual Triggers
-    document.getElementById('triggerDailyBtn').onclick = async () => {
-        const btn = document.getElementById('triggerDailyBtn');
-        btn.disabled = true;
-        try {
-            const res = await fetch('api/system/daily_cron.php');
-            const data = await res.json();
-            if(data.success) showAlert('Daily Digest sent successfully.', 'success');
-        } finally { btn.disabled = false; }
-    };
+    // 7. Manual Summary Triggers
+    const triggerDailyBtn = document.getElementById('triggerDailyBtn');
+    if (triggerDailyBtn) {
+        triggerDailyBtn.onclick = async () => {
+            triggerDailyBtn.disabled = true;
+            try {
+                const res = await fetch('api/system/daily_cron.php');
+                const data = await res.json();
+                if(data.success) showAlert('Daily Digest dispatched.', 'success');
+            } finally { triggerDailyBtn.disabled = false; }
+        };
+    }
 
-    document.getElementById('triggerMonthlyBtn').onclick = async () => {
-        const btn = document.getElementById('triggerMonthlyBtn');
-        btn.disabled = true;
-        try {
-            const res = await fetch('api/system/monthly_cron.php');
-            const data = await res.json();
-            if(data.success) showAlert('Monthly Summary sent successfully.', 'success');
-        } finally { btn.disabled = false; }
-    };
+    const triggerMonthlyBtn = document.getElementById('triggerMonthlyBtn');
+    if (triggerMonthlyBtn) {
+        triggerMonthlyBtn.onclick = async () => {
+            triggerMonthlyBtn.disabled = true;
+            try {
+                const res = await fetch('api/system/monthly_cron.php');
+                const data = await res.json();
+                if(data.success) showAlert('Monthly Summary dispatched.', 'success');
+            } finally { triggerMonthlyBtn.disabled = false; }
+        };
+    }
 
-    // 7. XentraUpdate Core logic (Manual Trigger Only)
+    // 8. XentraUpdate Core Logic
     async function checkSystemUpdate() {
-        const updateArea = document.getElementById('updateStatusArea');
-        updateArea.innerHTML = `
-            <div class="text-center py-4">
-                <div class="spinner-border text-primary spinner-border-sm me-2"></div>
-                <span class="small fw-bold">Connecting to GitHub...</span>
-            </div>
-        `;
+        if (!updateArea) return;
+        updateArea.innerHTML = `<div class="text-center py-4"><div class="spinner-border text-primary spinner-border-sm me-2"></div><span class="small fw-bold">Connecting...</span></div>`;
 
         try {
             const res = await fetch('api/system/update_core.php?action=check');
             const data = await res.json();
             
             if (data.success) {
-                // Update local version header badge
-                const localBadge = document.getElementById('localVersionBadge');
                 if(localBadge) localBadge.innerText = 'v' + data.current + ' (Current)';
-                     const patchNotesHtml = (data.patch_notes && data.patch_notes.length > 0) 
-                        ? `<div class="bg-white bg-opacity-25 rounded-3 p-3 mb-3">
-                            <h6 class="small fw-bold opacity-75 mb-2"><i class="bi bi-list-check me-1"></i> Updating Modules:</h6>
-                            <ul class="small mb-0 ps-3">
-                                ${data.patch_notes.map(note => `<li>${note}</li>`).join('')}
-                            </ul>
-                           </div>` 
+                
+                if (data.hasUpdate) {
+                    const patchNotesHtml = (data.patch_notes && data.patch_notes.length > 0) 
+                        ? `<div class="bg-white bg-opacity-25 rounded-3 p-3 mb-3"><h6 class="small fw-bold opacity-75 mb-2"><i class="bi bi-list-check me-1"></i> Updating Modules:</h6><ul class="small mb-0 ps-3">${data.patch_notes.map(note => `<li>${note}</li>`).join('')}</ul></div>` 
                         : '';
 
                     updateArea.innerHTML = `
                         <div class="alert alert-warning border-0 shadow-sm mb-0">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-rocket-takeoff-fill me-2 fs-5 text-dark"></i>
-                                <h6 class="fw-bold mb-0 text-dark">New Version Identified: v${data.latest}</h6>
+                                <h6 class="fw-bold mb-0 text-dark">New Build Identified: v${data.latest}</h6>
                             </div>
-                            <p class="small text-dark mb-3 opacity-75">${data.description || `Build released on ${data.release_date}. This package contains important performance and stability patches.`}</p>
-                            
+                            <p class="small text-dark mb-3 opacity-75">${data.description || `Build released on ${data.release_date}.`}</p>
                             ${patchNotesHtml}
-
                             <button type="button" class="btn btn-primary w-100 fw-bold shadow-sm" id="applyUpdateBtn">
                                 Apply Synchronized Update Now
                             </button>
                         </div>
                     `;
-                    document.getElementById('applyUpdateBtn').onclick = applyUpdate;
+                    const applyBtn = document.getElementById('applyUpdateBtn');
+                    if (applyBtn) applyBtn.onclick = applyUpdate;
                 } else {
                     updateArea.innerHTML = `
                         <div class="alert alert-success border-0 shadow-sm mb-0 d-flex align-items-center py-3">
                             <i class="bi bi-check-circle-fill me-3 fs-4"></i>
                             <div>
                                 <h6 class="fw-bold mb-0 text-dark">Local system is healthy</h6>
-                                <p class="small mb-0 text-dark opacity-75">You are running the latest stable build of XentraPOS.</p>
+                                <p class="small mb-0 text-dark opacity-75">You are running the latest stable build.</p>
                             </div>
                         </div>
                     `;
@@ -405,7 +423,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
             updateArea.innerHTML = `
                 <div class="alert alert-light border shadow-sm mb-0 p-3 small text-muted text-center">
-                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> GitHub Sync Failed. <button class="btn btn-link btn-sm p-0 text-decoration-none" onclick="checkSystemUpdate()">Retry Check</button>
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> GitHub Sync Failed. <button class="btn btn-link btn-sm p-0 text-decoration-none" onclick="location.reload()">Retry Connection</button>
                 </div>
             `;
         }
@@ -413,15 +431,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function applyUpdate() {
         if (!confirm("Proceed with GitHub synchronization? (Local config/logo will be protected)")) return;
-        const updateArea = document.getElementById('updateStatusArea');
-        updateArea.innerHTML = `<div class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><h6 class="fw-bold">Merging Core Assets...</h6></div>`;
+        if (updateArea) updateArea.innerHTML = `<div class="text-center py-4"><div class="spinner-border text-primary mb-3"></div><h6 class="fw-bold">Merging Assets...</h6></div>`;
         try {
             const res = await fetch('api/system/update_core.php?action=apply');
             const data = await res.json();
             if (data.success) {
                 updateArea.innerHTML = `<div class="alert alert-success border-0 text-center py-4"><i class="bi bi-check-circle fs-1 mb-3 d-block"></i><h6 class="fw-bold text-dark">Sync Successful!</h6><button class="btn btn-dark btn-sm mt-3" onclick="location.reload()">Refresh System</button></div>`;
             } else throw new Error(data.message);
-        } catch (err) { showAlert(err.message, 'danger'); checkSystemUpdate(); }
+        } catch (err) { 
+            showAlert(err.message, 'danger'); 
+            checkSystemUpdate(); 
+        }
     }
 
     if (manualCheckBtn) manualCheckBtn.onclick = checkSystemUpdate;
@@ -429,7 +449,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const forceSyncLink = document.getElementById('forceSyncLink');
     if (forceSyncLink) {
         forceSyncLink.onclick = () => {
-            if (confirm("FORCE RE-SYNC?\n\nThis will re-download the entire XentraPOS system from GitHub and overwrite your local files (except config/logos).\n\nUse this only if your system is reporting 'Healthy' but is actually broken.")) {
+            if (confirm("FORCE RE-SYNC?\n\nThis will re-download the entire XentraPOS system from GitHub.\n\nUse this only if your system is reporting 'Healthy' but is broken.")) {
                 applyUpdate();
             }
         };
