@@ -22,7 +22,19 @@ CREATE TABLE IF NOT EXISTS `activity_log` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
--- 3. CATEGORIES & PRODUCTS
+-- 3. CUSTOMERS (CRM)
+CREATE TABLE IF NOT EXISTS `customers` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `phone` VARCHAR(20) NOT NULL UNIQUE,
+  `email` VARCHAR(100) NULL,
+  `address` TEXT NULL,
+  `balance` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 4. CATEGORIES & PRODUCTS
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(100) NOT NULL,
@@ -46,10 +58,14 @@ CREATE TABLE IF NOT EXISTS `products` (
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
 );
 
--- 4. SALES & TRANSACTIONS
+-- 5. SALES & TRANSACTIONS
 CREATE TABLE IF NOT EXISTS `sales` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `invoice_number` VARCHAR(20) UNIQUE NULL,
   `user_id` INT NOT NULL,
+  `customer_id` INT NULL,
+  `customer_name` VARCHAR(100) NULL,
+  `customer_phone` VARCHAR(20) NULL,
   `subtotal` DECIMAL(10,2) NOT NULL DEFAULT 0,
   `discount_amount` DECIMAL(10,2) NOT NULL DEFAULT 0,
   `tax_amount` DECIMAL(10,2) NOT NULL DEFAULT 0,
@@ -58,7 +74,8 @@ CREATE TABLE IF NOT EXISTS `sales` (
   `amount_tendered` DECIMAL(10,2) NOT NULL,
   `change_due` DECIMAL(10,2) NOT NULL DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+  FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS `sale_items` (
@@ -68,13 +85,14 @@ CREATE TABLE IF NOT EXISTS `sale_items` (
   `custom_name` VARCHAR(255) NULL,
   `quantity` INT NOT NULL,
   `unit_price` DECIMAL(10,2) NOT NULL,
-  `item_discount` DECIMAL(10,2) NOT NULL DEFAULT 0,
+  `buy_price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `item_discount` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   `line_total` DECIMAL(10,2) NOT NULL,
   FOREIGN KEY (`sale_id`) REFERENCES `sales`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE SET NULL
 );
 
--- 5. SYSTEM SETTINGS
+-- 6. SYSTEM SETTINGS
 CREATE TABLE IF NOT EXISTS `settings` (
     `setting_key` VARCHAR(50) PRIMARY KEY,
     `setting_value` TEXT NULL
@@ -86,7 +104,10 @@ INSERT IGNORE INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('company_address', '123 Business Avenue, City, State 12345'),
 ('company_email', 'contact@company.com'),
 ('company_phone', '(123) 456-7890'),
-('company_logo', 'assets/img/logo.png');
+('company_logo', 'assets/img/logo.png'),
+('currency_symbol', '$'),
+('low_stock_threshold', '10'),
+('email_alerts_enabled', '0');
 
 -- Default Super Admin (password: admin123)
 -- Delete or edit this after first login
