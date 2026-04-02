@@ -169,7 +169,7 @@ require_role(['super_admin']);
                             <h4 class="fw-bold mb-1"><i class="bi bi-cloud-arrow-down-fill text-primary me-2"></i> XentraUpdate Core</h4>
                             <p class="text-muted small mb-0">Synchronize your local files with the latest GitHub stable release.</p>
                         </div>
-                        <span class="badge bg-light text-dark border p-2 px-3 fw-bold">v1.6.0 Stable</span>
+                        <span class="badge bg-light text-dark border p-2 px-3 fw-bold" id="localVersionBadge">v... Loading</span>
                     </div>
 
                     <div id="updateStatusArea" class="mb-4">
@@ -362,14 +362,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await res.json();
             
             if (data.success) {
-                if (data.hasUpdate) {
+                // Update local version header badge
+                const localBadge = document.getElementById('localVersionBadge');
+                if(localBadge) localBadge.innerText = 'v' + data.current + ' (Current)';
+                     const patchNotesHtml = (data.patch_notes && data.patch_notes.length > 0) 
+                        ? `<div class="bg-white bg-opacity-25 rounded-3 p-3 mb-3">
+                            <h6 class="small fw-bold opacity-75 mb-2"><i class="bi bi-list-check me-1"></i> Updating Modules:</h6>
+                            <ul class="small mb-0 ps-3">
+                                ${data.patch_notes.map(note => `<li>${note}</li>`).join('')}
+                            </ul>
+                           </div>` 
+                        : '';
+
                     updateArea.innerHTML = `
                         <div class="alert alert-warning border-0 shadow-sm mb-0">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="bi bi-rocket-takeoff-fill me-2 fs-5 text-dark"></i>
                                 <h6 class="fw-bold mb-0 text-dark">New Version Identified: v${data.latest}</h6>
                             </div>
-                            <p class="small text-dark mb-3 opacity-75">Build released on ${data.release_date}. This package contains important performance and stability patches.</p>
+                            <p class="small text-dark mb-3 opacity-75">${data.description || `Build released on ${data.release_date}. This package contains important performance and stability patches.`}</p>
+                            
+                            ${patchNotesHtml}
+
                             <button type="button" class="btn btn-primary w-100 fw-bold shadow-sm" id="applyUpdateBtn">
                                 Apply Synchronized Update Now
                             </button>

@@ -34,7 +34,9 @@ if ($action === 'check') {
             'current' => $localManifest['version'],
             'latest' => $remoteManifest['version'],
             'hasUpdate' => $hasUpdate,
-            'release_date' => $remoteManifest['release_date'] ?? 'N/A'
+            'release_date' => $remoteManifest['release_date'] ?? 'N/A',
+            'description' => $remoteManifest['description'] ?? '',
+            'patch_notes' => $remoteManifest['patch_notes'] ?? []
         ]);
         exit;
         

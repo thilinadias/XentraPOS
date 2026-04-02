@@ -1,6 +1,13 @@
 {
-    "version": "2.1.2",
+    "version": "2.1.3",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Financial Integrity (v2.1.2): Corrected rogue cost analytics and hardened product entry guards."
+    "description": "Intelligent Update v2.1.3: Real-time module tracking and enhanced financial audit guards.",
+    "patch_notes": [
+        "Financial Integrity Guard (Cost Price Sanity)",
+        "Enterprise Dashboard Analytics Engine",
+        "Activity Audit Pathing Restoration",
+        "Business Intelligence Profit Reconstruction",
+        "Intelligent UI (Dynamic Patch Module Tracking)"
+    ]
 }
