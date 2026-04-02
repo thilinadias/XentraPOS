@@ -118,6 +118,13 @@ if ($action === 'apply') {
         // Step E: DATABASE MIGRATIONS (Sequential SQL Execution)
         $migrationsFolder = $rootSource . DIRECTORY_SEPARATOR . 'updates';
         if (is_dir($migrationsFolder)) {
+            // Bootstrap Migrations Table if missing
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `migrations` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `filename` VARCHAR(255) NOT NULL UNIQUE,
+                `executed_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )");
+
             $sqlFiles = glob($migrationsFolder . DIRECTORY_SEPARATOR . '*.sql');
             sort($sqlFiles); // Run in order (e.g. v1.6.1 before v1.6.2)
 
