@@ -1,6 +1,6 @@
 {
-    "version": "2.0.7",
+    "version": "2.0.8",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Analytics Restoration (v2.0.7): Fixed legacy status filtering in Dashboard and Reports."
+    "description": "Enterprise API Hardening (v2.0.8): Migrated Audit Logs to 'system' namespace to bypass server security restrictions."
 }

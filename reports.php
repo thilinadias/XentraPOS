@@ -356,7 +356,7 @@ async function loadStockReports() {
 async function loadActivityLogs() {
     const tbody = document.getElementById('logTableBody');
     try {
-        const res = await fetch('api/logs/list.php', {
+        const res = await fetch('api/system/audit_logs.php', {
             headers: { 'Accept': 'application/json' }
         });
         
