@@ -1,6 +1,6 @@
 {
-    "version": "2.0.5",
+    "version": "2.0.6",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Middleware Sync (v2.0.5): Absolute authentication stability and relative API pathing."
+    "description": "Enterprise Sync v2.0.6: Final Analytics Stability and Force-Sync Support."
 }
