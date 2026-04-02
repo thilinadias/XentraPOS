@@ -1,6 +1,6 @@
 {
-    "version": "2.1.1",
+    "version": "2.1.2",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Gold Fix (v2.1.1): Forced analytics synchronization and hardened update engine."
+    "description": "Financial Integrity (v2.1.2): Corrected rogue cost analytics and hardened product entry guards."
 }
