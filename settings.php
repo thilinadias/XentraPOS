@@ -410,8 +410,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) { showAlert(err.message, 'danger'); checkSystemUpdate(); }
     }
 
-    const manualCheckBtn = document.getElementById('manualCheckBtn');
     if (manualCheckBtn) manualCheckBtn.onclick = checkSystemUpdate;
+
+    const forceSyncLink = document.getElementById('forceSyncLink');
+    if (forceSyncLink) {
+        forceSyncLink.onclick = () => {
+            if (confirm("FORCE RE-SYNC?\n\nThis will re-download the entire XentraPOS system from GitHub and overwrite your local files (except config/logos).\n\nUse this only if your system is reporting 'Healthy' but is actually broken.")) {
+                applyUpdate();
+            }
+        };
+    }
 });
 
 function showAlert(message, type = 'success', containerId = 'alertContainer') {

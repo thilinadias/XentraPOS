@@ -1,6 +1,6 @@
 {
-    "version": "2.1.0",
+    "version": "2.1.1",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Gold Edition (v2.1.0): Real-time update synchronization and ultimate analytics stability."
+    "description": "Enterprise Gold Fix (v2.1.1): Forced analytics synchronization and hardened update engine."
 }
