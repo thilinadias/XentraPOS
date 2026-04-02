@@ -17,8 +17,8 @@ try {
     // Note: total_profit = Total Revenue (After discounts) - Total Cost of items
     $stmtSummary = $pdo->prepare("
         SELECT 
-            SUM(CASE WHEN status = 'Paid' THEN 1 ELSE 0 END) as sales_count,
-            SUM(CASE WHEN status = 'Paid' THEN grand_total ELSE 0 END) as net_revenue,
+            SUM(CASE WHEN status IN ('Completed', 'Paid', '') OR status IS NULL THEN 1 ELSE 0 END) as sales_count,
+            SUM(CASE WHEN status IN ('Completed', 'Paid', '') OR status IS NULL THEN grand_total ELSE 0 END) as net_revenue,
             SUM(CASE WHEN status = 'Refunded' THEN grand_total ELSE 0 END) as total_refunded,
             SUM(CASE WHEN status = 'Refunded' THEN 1 ELSE 0 END) as refund_count,
             SUM(discount_amount) as total_discounts
@@ -33,7 +33,7 @@ try {
         SELECT SUM(si.quantity * si.buy_price) as total_cost 
         FROM sale_items si 
         JOIN sales s ON si.sale_id = s.id 
-        WHERE DATE(s.created_at) BETWEEN ? AND ? AND s.status = 'Paid'
+        WHERE DATE(s.created_at) BETWEEN ? AND ? AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
     ");
     $stmtCost->execute([$start_date, $end_date]);
     $cost_data = $stmtCost->fetch();
@@ -72,7 +72,7 @@ try {
         FROM sale_items si
         JOIN sales s ON si.sale_id = s.id
         JOIN products p ON si.product_id = p.id
-        WHERE DATE(s.created_at) BETWEEN ? AND ? AND s.status = 'Paid'
+        WHERE DATE(s.created_at) BETWEEN ? AND ? AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
         GROUP BY si.product_id
         ORDER BY total_qty DESC
         LIMIT 10
@@ -87,7 +87,7 @@ try {
         JOIN sales s ON si.sale_id = s.id
         JOIN products p ON si.product_id = p.id
         JOIN categories c ON p.category_id = c.id
-        WHERE DATE(s.created_at) BETWEEN ? AND ? AND s.status = 'Paid'
+        WHERE DATE(s.created_at) BETWEEN ? AND ? AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
         GROUP BY c.id
         ORDER BY revenue DESC
     ");
@@ -96,9 +96,9 @@ try {
 
     // 4. Daily Sales Trend
     $stmtTrend = $pdo->prepare("
-        SELECT DATE(created_at) as date, SUM(grand_total) as revenue, (SUM(grand_total) - (SELECT SUM(si.quantity * si.buy_price) FROM sale_items si JOIN sales s3 ON si.sale_id = s3.id WHERE DATE(s3.created_at) = DATE(s.created_at) AND s3.status = 'Paid')) as profit
+        SELECT DATE(created_at) as date, SUM(grand_total) as revenue, (SUM(grand_total) - (SELECT SUM(si.quantity * si.buy_price) FROM sale_items si JOIN sales s3 ON si.sale_id = s3.id WHERE DATE(s3.created_at) = DATE(s.created_at) AND (s3.status IN ('Completed', 'Paid', '') OR s3.status IS NULL))) as profit
         FROM sales s
-        WHERE DATE(created_at) BETWEEN ? AND ? AND s.status = 'Paid'
+        WHERE DATE(created_at) BETWEEN ? AND ? AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
         GROUP BY DATE(created_at)
         ORDER BY date ASC
     ");
@@ -111,7 +111,7 @@ try {
         SELECT u.username, COUNT(s.id) as sales_count, SUM(s.grand_total) as total_revenue
         FROM sales s
         JOIN users u ON s.user_id = u.id
-        WHERE DATE(s.created_at) BETWEEN ? AND ? AND s.status = 'Paid'
+        WHERE DATE(s.created_at) BETWEEN ? AND ? AND (s.status IN ('Completed', 'Paid', '') OR s.status IS NULL)
         GROUP BY s.user_id
         ORDER BY total_revenue DESC
     ");
