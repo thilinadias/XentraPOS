@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: xentrapos_app
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_HOST=db
+      - DB_NAME=pos_db
+      - DB_USER=root
+      - DB_PASS=admin123
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:10.11
+    container_name: xentrapos_db
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=admin123
+      - MARIADB_DATABASE=pos_db
+    volumes:
+      - db_data:/var/lib/mysql
+      # Automatically initialize database with base schema
+      - ./database.sql:/docker-entrypoint-initdb.d/01_init.sql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:

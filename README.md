@@ -49,30 +49,19 @@ XentraPOS is a high-performance, professional-grade business management architec
 5. **Configuration**: Rename `config/database.example.php` to `config/database.php` and enter your credentials.
 6. **Access**: Navigate to `http://localhost/pos/login.php`.
 
-### 🐧 Linux Setup (Ubuntu / LAMP)
-1. **Install Dependencies**:
+### 🐳 Linux Setup (Docker / Recommended)
+We recommend Docker for Linux to guarantee a flawless, zero-configuration environment.
+
+1. **Prerequisites**: Ensure [Docker Desktop](https://www.docker.com/) or Docker Engine/Compose is installed.
+2. **Download & Run**:
    ```bash
-   sudo apt update
-   sudo apt install apache2 mariadb-server php php-mysql php-zip php-curl libapache2-mod-php
+   git clone https://github.com/thilinadias/XentraPOS.git pos
+   cd pos
+   chmod +x install.sh
+   ./install.sh
    ```
-2. **File Placement**:
-   ```bash
-   cd /var/www/html
-   sudo git clone https://github.com/thilinadias/XentraPOS.git pos
-   ```
-3. **Permissions (Critical)**: For XentraUpdate to work, Apache must own the files:
-   ```bash
-   sudo chown -R www-data:www-data /var/www/html/pos
-   sudo chmod -R 755 /var/www/html/pos
-   ```
-4. **Database Setup**:
-   ```bash
-   sudo mysql -u root -p
-   CREATE DATABASE pos_db;
-   USE pos_db;
-   SOURCE /var/www/html/pos/database.sql;
-   ```
-5. **Virtual Host**: Ensure your Apache config allows `.htaccess` overrides if you use pretty URLs (optional).
+3. **Access**: Navigate to `http://localhost:8080`.
+*(Note: Docker automatically imports the database schema and injects connection credentials, requiring zero manual configuration.)*
 
 ---
 
