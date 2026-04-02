@@ -40,6 +40,12 @@ try {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
+            // Record Activity Log
+            try {
+                $logStmt = $pdo->prepare("INSERT INTO activity_log (user_id, action, description) VALUES (?, ?, ?)");
+                $logStmt->execute([$user['id'], 'Login', 'User logged into the system']);
+            } catch (Exception $e) { /* Non-critical error, continue login */ }
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Login successful.',

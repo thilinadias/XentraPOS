@@ -25,7 +25,8 @@ async function apiCall(endpoint, method = 'GET', body = null) {
             data = JSON.parse(text);
         } catch (e) {
             console.error("Non-JSON response received", text);
-            throw new Error("Server returned an invalid response.");
+            // Provide exact status code for debugging
+            throw new Error(`Server returned an invalid response (HTTP ${response.status}).`);
         }
 
         if (!response.ok) {
