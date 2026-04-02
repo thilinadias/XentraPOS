@@ -2,11 +2,21 @@
 -- MIGRATION: 2.0.0 (Enterprise CRM & Profit Tracking)
 -- ===========================================
 
--- 1. Ensure Migrations table exists (Self-bootstrapping)
+-- 1. Ensure Migrations table exists
 CREATE TABLE IF NOT EXISTS `migrations` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `filename` VARCHAR(255) NOT NULL UNIQUE,
     `executed_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 1b. Ensure Activity Log table exists
+CREATE TABLE IF NOT EXISTS `activity_log` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT NOT NULL,
+    `action` VARCHAR(100) NOT NULL,
+    `description` TEXT,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 -- 2. Add missing columns to Products
@@ -53,5 +63,8 @@ ALTER TABLE sales
 ALTER TABLE sale_items 
   ADD COLUMN IF NOT EXISTS buy_price DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER unit_price;
 
--- 7. Register this migration manually in case of direct execution
+-- 8. Data Correction: Mark all legacy sales as 'Completed' so they show on dashboard
+UPDATE sales SET status = 'Completed' WHERE status IS NULL OR status = 'Paid' OR status = '';
+
+-- 9. Register this migration manually in case of direct execution
 INSERT IGNORE INTO `migrations` (`filename`) VALUES ('v2.0.0_enterprise.sql');
