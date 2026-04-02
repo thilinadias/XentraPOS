@@ -356,10 +356,19 @@ async function loadStockReports() {
 async function loadActivityLogs() {
     const tbody = document.getElementById('logTableBody');
     try {
-        const res = await fetch('/pos/api/logs/list.php', {
+        const res = await fetch('api/logs/list.php', {
             headers: { 'Accept': 'application/json' }
         });
         
+        if (res.status === 401) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-warning">
+                <i class="bi bi-person-lock fs-2"></i><br>
+                <b>Session Expired.</b><br>
+                <a href="/pos/" class="btn btn-sm btn-outline-warning mt-2">Login Again</a>
+            </td></tr>`;
+            return;
+        }
+
         const contentType = res.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
             const errorBody = await res.text();
@@ -367,7 +376,7 @@ async function loadActivityLogs() {
             tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">
                 <i class="bi bi-exclamation-octagon fs-2"></i><br>
                 <b>Server communication error.</b><br>
-                <small class="text-muted">The server returned HTML instead of data. Please check your login session.</small>
+                <small class="text-muted">Status: ${res.status}. Please check your login session.</small>
             </td></tr>`;
             return;
         }

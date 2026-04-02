@@ -10,8 +10,17 @@ if (session_status() === PHP_SESSION_NONE) {
  */
 function require_login() {
     if (!isset($_SESSION['user_id'])) {
-        header("Location: /pos/index.php");
-        exit;
+        // If it's an API request (expecting JSON)
+        if (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false) {
+            http_response_code(401);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Session expired. Please log in again.']);
+            exit;
+        } else {
+            // Normal page request
+            header("Location: /pos/index.php");
+            exit;
+        }
     }
 }
 

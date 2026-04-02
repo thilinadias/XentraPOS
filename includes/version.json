@@ -1,6 +1,6 @@
 {
-    "version": "2.0.4",
+    "version": "2.0.5",
     "release_date": "2026-04-02",
     "channel": "stable",
-    "description": "Enterprise Stability Sync (v2.0.4): Advanced Activity Audit diagnostics and absolute error silencing."
+    "description": "Enterprise Middleware Sync (v2.0.5): Absolute authentication stability and relative API pathing."
 }
