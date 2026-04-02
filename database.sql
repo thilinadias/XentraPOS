@@ -1,3 +1,7 @@
+-- ===========================================
+-- XentraPOS Master Enterprise Schema (v1.6.2)
+-- ===========================================
+
 CREATE DATABASE IF NOT EXISTS pos_db;
 USE pos_db;
 
@@ -34,7 +38,27 @@ CREATE TABLE IF NOT EXISTS `customers` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 4. CATEGORIES & PRODUCTS
+CREATE TABLE IF NOT EXISTS `customer_payments` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `customer_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `amount` DECIMAL(10,2) NOT NULL,
+  `payment_method` ENUM('Cash', 'Card', 'Credit') NOT NULL DEFAULT 'Cash',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+);
+
+-- 4. SUPPLIERS & INVENTORY
+CREATE TABLE IF NOT EXISTS `suppliers` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `contact_person` VARCHAR(100) NULL,
+  `phone` VARCHAR(20) NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(100) NOT NULL,
@@ -58,6 +82,18 @@ CREATE TABLE IF NOT EXISTS `products` (
   FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
 );
 
+CREATE TABLE IF NOT EXISTS `purchase_history` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `product_id` INT NOT NULL,
+  `supplier_id` INT NULL,
+  `quantity` INT NOT NULL,
+  `unit_cost` DECIMAL(10,2) NOT NULL,
+  `total_cost` DECIMAL(10,2) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`supplier_id`) REFERENCES `suppliers`(`id`) ON DELETE SET NULL
+);
+
 -- 5. SALES & TRANSACTIONS
 CREATE TABLE IF NOT EXISTS `sales` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -73,6 +109,9 @@ CREATE TABLE IF NOT EXISTS `sales` (
   `payment_type` ENUM('Cash', 'Card', 'Credit') NOT NULL,
   `amount_tendered` DECIMAL(10,2) NOT NULL,
   `change_due` DECIMAL(10,2) NOT NULL DEFAULT 0,
+  `status` ENUM('Completed', 'Refunded', 'Cancelled') NOT NULL DEFAULT 'Completed',
+  `refund_reason` TEXT NULL,
+  `refund_notes` TEXT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
   FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE SET NULL
@@ -92,13 +131,19 @@ CREATE TABLE IF NOT EXISTS `sale_items` (
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE SET NULL
 );
 
--- 6. SYSTEM SETTINGS
+-- 6. SYSTEM SETTINGS & MIGRATIONS
 CREATE TABLE IF NOT EXISTS `settings` (
     `setting_key` VARCHAR(50) PRIMARY KEY,
     `setting_value` TEXT NULL
 );
 
--- INITIAL DATA
+CREATE TABLE IF NOT EXISTS `migrations` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `filename` VARCHAR(255) NOT NULL UNIQUE,
+    `executed_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- INITIAL SYSTEM DATA
 INSERT IGNORE INTO `settings` (`setting_key`, `setting_value`) VALUES 
 ('company_name', 'XentraPOS Enterprise'),
 ('company_address', '123 Business Avenue, City, State 12345'),
@@ -107,7 +152,13 @@ INSERT IGNORE INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('company_logo', 'assets/img/logo.png'),
 ('currency_symbol', '$'),
 ('low_stock_threshold', '10'),
-('email_alerts_enabled', '0');
+('email_alerts_enabled', '0'),
+('smtp_host', 'smtp.gmail.com'),
+('smtp_port', '587'),
+('smtp_encryption', 'tls'),
+('smtp_user', ''),
+('smtp_pass', ''),
+('smtp_from_email', '');
 
 -- Default Super Admin (password: admin123)
 -- Delete or edit this after first login
