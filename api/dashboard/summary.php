@@ -51,7 +51,7 @@ try {
     $stats['chart_data'] = $stmtChart->fetchAll(PDO::FETCH_ASSOC);
 
     // 5. Recent Sales (Last 5)
-    $stmtRecent = $pdo->query("SELECT id, invoice_number, customer_name, grand_total, created_at FROM sales ORDER BY id DESC LIMIT 5");
+    $stmtRecent = $pdo->query("SELECT id, invoice_number, customer_name, grand_total, status, created_at FROM sales ORDER BY id DESC LIMIT 5");
     $stats['recent_sales'] = $stmtRecent->fetchAll(PDO::FETCH_ASSOC);
 
     // 6. Low Stock Items (Top 10)

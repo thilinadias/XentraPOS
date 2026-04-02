@@ -130,9 +130,10 @@ require_once 'includes/header.php';
                                 <th class="py-3 px-4">Ref #</th>
                                 <th class="py-3">Timestamp</th>
                                 <th class="py-3">Customer</th>
+                                <th class="py-3">Status</th>
                                 <th class="text-end py-3">Total Amount</th>
                                 <th class="text-center py-3">Action</th>
-                            </tr>
+                              </tr>
                         </thead>
                     <tbody id="recentSalesTbody">
                         <tr><td colspan="5" class="text-center py-4">Loading sales data...</td></tr>
@@ -207,12 +208,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (stats.recent_sales.length > 0) {
             recentTbody.innerHTML = '';
             stats.recent_sales.forEach(sale => {
+                let statusBadge = '';
+                if(sale.status === 'Completed') statusBadge = '<span class="badge bg-success-subtle text-success border border-success-subtle px-2">Sale</span>';
+                else if(sale.status === 'Refunded') statusBadge = '<span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2">Refund</span>';
+                else statusBadge = `<span class="badge bg-light text-muted border px-2">${sale.status}</span>`;
+
                 recentTbody.innerHTML += `
                     <tr>
-                        <td class="fw-bold">${sale.invoice_number}</td>
+                        <td class="fw-bold px-4">${sale.invoice_number}</td>
                         <td>${new Date(sale.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} • ${new Date(sale.created_at).toLocaleDateString()}</td>
                         <td>${sale.customer_name || '<span class="text-muted">Walk-in</span>'}</td>
-                        <td class="text-end fw-bold">${cur}${parseFloat(sale.grand_total).toFixed(2)}</td>
+                        <td>${statusBadge}</td>
+                        <td class="text-end fw-bold">${cur}${parseFloat(sale.grand_total).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                         <td class="text-center">
                             <a href="/pos/invoice.php?id=${sale.id}" target="_blank" class="btn btn-sm btn-outline-primary px-3">Invoice</a>
                         </td>
