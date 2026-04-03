@@ -37,7 +37,10 @@ async function loadCustomers() {
                     <td>${c.phone}</td>
                     <td class="text-end ${balClass}">${cur}${parseFloat(c.balance).toLocaleString()}</td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-outline-info px-2" onclick="openLedger(${c.id}, '${c.name.replace(/'/g, "\\'")}')" title="View Full Ledger"><i class="bi bi-journal-text me-1"></i> Ledger</button>
+                        <div class="btn-group shadow-sm">
+                            <button class="btn btn-sm btn-outline-info px-2" onclick="openLedger(${c.id}, '${c.name.replace(/'/g, "\\'")}')" title="View Full Ledger"><i class="bi bi-journal-text me-1"></i> Ledger</button>
+                            <button class="btn btn-sm btn-outline-dark px-2" onclick='openEditCustomerModal(${JSON.stringify(c).replace(/'/g, "&apos;")})' title="Edit Profile"><i class="bi bi-pencil"></i></button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -54,23 +57,42 @@ async function loadCustomers() {
 
 function openAddModal() {
     document.getElementById('customerForm').reset();
-    document.getElementById('customerModalTitle').textContent = 'New Customer';
+    document.getElementById('custId').value = '';
+    document.getElementById('customerModalTitle').textContent = 'New Customer Profile';
+    document.getElementById('saveCustBtn').textContent = 'Create Profile';
+    customerModal.show();
+}
+
+function openEditCustomerModal(c) {
+    document.getElementById('customerForm').reset();
+    document.getElementById('custId').value = c.id;
+    document.getElementById('custName').value = c.name;
+    document.getElementById('custPhone').value = c.phone;
+    document.getElementById('custEmail').value = c.email || '';
+    document.getElementById('custAddress').value = c.address || '';
+    
+    document.getElementById('customerModalTitle').textContent = 'Edit Customer Profile';
+    document.getElementById('saveCustBtn').textContent = 'Update Profile';
     customerModal.show();
 }
 
 document.getElementById('customerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const saveBtn = document.getElementById('saveCustBtn');
+    const custId = document.getElementById('custId').value;
     saveBtn.disabled = true;
 
     const formData = new URLSearchParams();
+    if (custId) formData.append('id', custId);
     formData.append('name', document.getElementById('custName').value);
     formData.append('phone', document.getElementById('custPhone').value);
     formData.append('email', document.getElementById('custEmail').value);
     formData.append('address', document.getElementById('custAddress').value);
 
+    const endpoint = custId ? '/pos/api/customers/update.php' : '/pos/api/customers/create.php';
+
     try {
-        const res = await fetch('/pos/api/customers/create.php', {
+        const res = await fetch(endpoint, {
             method: 'POST',
             body: formData
         });

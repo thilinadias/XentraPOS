@@ -31,7 +31,10 @@ async function loadSuppliers() {
                     <td>${s.phone || 'N/A'}</td>
                     <td>${s.email || 'N/A'}</td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary px-2" onclick="openHistory(${s.id}, '${s.name.replace(/'/g, "\\'")}')" title="View Purchase History"><i class="bi bi-box-seam me-1"></i> History</button>
+                        <div class="btn-group shadow-sm">
+                            <button class="btn btn-sm btn-outline-primary px-2" onclick="openHistory(${s.id}, '${s.name.replace(/'/g, "\\'")}')" title="View Purchase History"><i class="bi bi-box-seam me-1"></i> History</button>
+                            <button class="btn btn-sm btn-outline-dark px-2" onclick='openEditSupplierModal(${JSON.stringify(s).replace(/'/g, "&apos;")})' title="Edit Details"><i class="bi bi-pencil"></i></button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -62,6 +65,21 @@ async function loadProductsForStockIn() {
 
 function openAddSupplierModal() {
     document.getElementById('supplierForm').reset();
+    document.getElementById('supId').value = '';
+    document.getElementById('supplierModalTitle').textContent = 'New Supplier';
+    document.getElementById('saveSupBtn').textContent = 'Add Vendor';
+    supModal.show();
+}
+
+function openEditSupplierModal(s) {
+    document.getElementById('supplierForm').reset();
+    document.getElementById('supId').value = s.id;
+    document.getElementById('supName').value = s.name;
+    document.getElementById('supContact').value = s.contact_person || '';
+    document.getElementById('supPhone').value = s.phone || '';
+    
+    document.getElementById('supplierModalTitle').textContent = 'Edit Supplier';
+    document.getElementById('saveSupBtn').textContent = 'Update Profile';
     supModal.show();
 }
 
@@ -82,15 +100,19 @@ document.getElementById('stockInProdId').addEventListener('change', function() {
 document.getElementById('supplierForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const saveBtn = document.getElementById('saveSupBtn');
+    const supId = document.getElementById('supId').value;
     saveBtn.disabled = true;
 
     const formData = new URLSearchParams();
+    if (supId) formData.append('id', supId);
     formData.append('name', document.getElementById('supName').value);
     formData.append('contact_person', document.getElementById('supContact').value);
     formData.append('phone', document.getElementById('supPhone').value);
 
+    const endpoint = supId ? '/pos/api/suppliers/update.php' : '/pos/api/suppliers/create.php';
+
     try {
-        const res = await fetch('/pos/api/suppliers/create.php', {
+        const res = await fetch(endpoint, {
             method: 'POST',
             body: formData
         });

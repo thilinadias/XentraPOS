@@ -56,10 +56,11 @@ require_once 'includes/header.php';
     <div class="modal-content border-0 shadow">
       <form id="supplierForm">
         <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-bold">New Supplier</h5>
+          <h5 class="modal-title fw-bold" id="supplierModalTitle">New Supplier</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
+          <input type="hidden" id="supId">
           <div class="mb-3">
             <label class="form-label fw-bold small">Company Name *</label>
             <input type="text" id="supName" class="form-control" required placeholder="e.g. Acme Phones">

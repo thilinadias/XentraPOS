@@ -93,6 +93,7 @@ require_once 'includes/header.php';
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-4">
+          <input type="hidden" id="custId">
           <div class="mb-3">
             <label class="form-label fw-bold small">Full Name *</label>
             <input type="text" id="custName" class="form-control" placeholder="John Doe" required>

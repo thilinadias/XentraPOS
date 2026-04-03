@@ -1,6 +1,6 @@
 {
-    "version": "2.1.7",
-    "release_date": "2026-04-02",
+    "version": "2.1.8",
+    "release_date": "2026-04-03",
     "channel": "stable",
-    "description": "System Core v2.1.7: Resolved dashboard syntax conflicts and finalized multi-node pathing."
+    "description": "System Core v2.1.8: Integrated Edit functionality for Supplier Hub and Customer CRM modules."
 }
