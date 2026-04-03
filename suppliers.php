@@ -157,6 +157,6 @@ require_once 'includes/header.php';
   </div>
 </div>
 
-<script src="assets/js/suppliers.js"></script>
+<script src="assets/js/suppliers.js?v=2.1.9"></script>
 
 <?php require_once 'includes/footer.php'; ?>

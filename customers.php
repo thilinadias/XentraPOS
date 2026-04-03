@@ -150,6 +150,6 @@ require_once 'includes/header.php';
   </div>
 </div>
 
-<script src="assets/js/customers.js"></script>
+<script src="assets/js/customers.js?v=2.1.9"></script>
 
 <?php require_once 'includes/footer.php'; ?>

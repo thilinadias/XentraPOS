@@ -1,6 +1,11 @@
 {
-    "version": "2.1.8",
+    "version": "2.1.9",
     "release_date": "2026-04-03",
     "channel": "stable",
-    "description": "System Core v2.1.8: Integrated Edit functionality for Supplier Hub and Customer CRM modules."
+    "description": "System Core v2.1.9: Final Enterprise Schema Sync and UI Cache-Busting.",
+    "patch_notes": [
+        "FORMAL SCHEMA SYNC: Created missing 'suppliers' and 'purchase_history' tables.",
+        "UI RESTORATION: Finalized the Edit functionality for both CRM and Supplier Hub.",
+        "CACHE BUSTING: Forced refresh for settings JavaScript logic."
+    ]
 }
